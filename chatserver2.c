@@ -25,7 +25,7 @@ void send_recv(int i, int sockfd)
         else
         {
             send(sockfd, send_buf, strlen(send_buf), 0);
-            printf("Sent data on socket descriptor: %d\n", sockfd);  // Menampilkan socket descriptor
+            printf("Sent data to socket descriptor: %d\n", sockfd);  // Menampilkan socket descriptor saat mengirim data
         }
     }
     else
@@ -35,7 +35,8 @@ void send_recv(int i, int sockfd)
         if (nbyte_recvd > 0)
         {
             recv_buf[nbyte_recvd] = '\0';
-            printf("Received: %s (from socket descriptor: %d)\n", recv_buf, sockfd);  // Menampilkan socket descriptor
+            printf("Received from socket descriptor %d: %s\n", sockfd, recv_buf);  // Menampilkan socket descriptor saat menerima data
+            fflush(stdout);
         }
     }
 }
@@ -59,7 +60,7 @@ void connect_req(int *sockfd, struct sockaddr_in *server_addr, const char *ip)
         exit(1);
     }
 
-    printf("Connected to server with socket descriptor: %d\n", *sockfd);  // Menampilkan socket descriptor
+    printf("Connected to server with socket descriptor: %d\n", *sockfd);  // Menampilkan socket descriptor setelah terhubung ke server
 }
 
 int main(int argc, char *argv[])
@@ -79,10 +80,10 @@ int main(int argc, char *argv[])
 
     FD_ZERO(&master);
     FD_ZERO(&read_fds);
-    FD_SET(0, &master);
-    FD_SET(sockfd, &master);
+    FD_SET(0, &master);  // Menambahkan stdin (input) ke set master
+    FD_SET(sockfd, &master);  // Menambahkan socket ke set master
 
-    fdmax = sockfd;
+    fdmax = sockfd;  // Socket descriptor tertinggi
 
     while (1)
     {
@@ -98,7 +99,7 @@ int main(int argc, char *argv[])
         {
             if (FD_ISSET(i, &read_fds))
             {
-                printf("Checking socket descriptor: %d\n", i);  // Menampilkan socket descriptor
+                printf("Checking socket descriptor: %d\n", i);  // Menampilkan socket descriptor yang sedang diperiksa
                 send_recv(i, sockfd);
             }
         }
